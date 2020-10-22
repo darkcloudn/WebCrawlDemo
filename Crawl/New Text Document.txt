@@ -1,0 +1,31 @@
+String stringPath = @"D:\Project C Sharp\Project Show\crawl\Crawl\text.txt";
+            FileStream fs = new FileStream(stringPath, FileMode.Create);
+            StreamWriter sWriter = new StreamWriter(fs, Encoding.UTF8);
+             HtmlWeb htmlWeb = new HtmlWeb()
+            {
+                AutoDetectEncoding = false,
+                OverrideEncoding = Encoding.UTF8
+            };
+            //Load Web
+            HtmlDocument document = htmlWeb.Load("http://www.webtretho.com/forum/f26/");
+
+            //Load Các tag li trong ul
+            var threadItems = document.DocumentNode.QuerySelectorAll("ul#threads > li").ToList();
+            var items = new List<Object>();
+            foreach(var item in threadItems)
+            {
+                var linkNode = item.QuerySelector("a.title");
+                var link = linkNode.Attributes["href"].Value;
+                var text = linkNode.InnerText;
+                var readCount = item.QuerySelector("div.folTypPost > ul > li > b").InnerText;
+                items.Add(new {link,text,readCount});             
+            }
+            foreach (var item in items)
+            {
+                sWriter.WriteLine(item);
+               
+            }
+            sWriter.Flush();
+            fs.Close();
+
+
